@@ -73,3 +73,20 @@ SELECT Placa FROM Vehiculos WHERE Estado = 'Activo'
 EXCEPT
 SELECT Placa FROM Vehiculos WHERE Estado = 'En mantenimiento';
 
+-- 5.	Implementar una transacción 
+BEGIN TRANSACTION;  
+--a.	Registre un mantenimiento.
+INSERT INTO Mantenimientos (IdVehiculo, IdConductor, FechaMantenimiento, Descripcion)
+VALUES (3, 2, GETDATE(), 'Revisión de frens');  
+
+--b.	Descuente temporalmente la disponibilidad del vehículo.
+BEGIN TRANSACTION; 
+UPDATE Vehiculos
+SET Estado = 'En mantenimiento'
+WHERE IdVehiculo = 3; 
+
+--c.	Asegure la consistencia usando BEGIN TRANSACTION, COMMIT y ROLLBACK.
+IF @@ERROR <> 0
+    ROLLBACK TRANSACTION;  
+ELSE
+    COMMIT TRANSACTION;    
